@@ -5,6 +5,7 @@ import { fetchImages } from "../api";
 import { useState, useEffect } from "react";
 import "./App.module.css";
 import Loader from "./Loader/Loader";
+import LoadMoreBtn from "./LoadMoreBtn/LoadMoreBtn";
 
 import ImageModal from "./ImageModal/ImageModal";
 
@@ -32,6 +33,11 @@ const App = () => {
     setModalIsOpen(false);
     setChooseImage(null);
   };
+
+  const handleChangePage = () => {
+    setPage((prev) => prev + 1);
+  };
+
   const handleImageClick = (image) => {
     setChooseImage(image);
     setModalIsOpen(true);
@@ -50,7 +56,7 @@ const App = () => {
         setImages((prevImages) => (page === 1 ? results : [...prevImages, ...results]));
         setTotalPages(totalPages);
       } catch (error) {
-        toast.error("Помилка під час пошуку зображень!");
+        toast.error("Sorry, no search results. Try again!");
         setIsError(true);
       } finally {
         setIsLoading(false);
@@ -66,11 +72,7 @@ const App = () => {
       {images.length > 0 && (
         <>
           <ImageGallery images={images} onImageClick={handleImageClick} />
-          {page < totalPages && !isLoading && (
-            <button className="loadMoreButton" onClick={() => setPage((prev) => prev + 1)}>
-              Load more
-            </button>
-          )}
+          {page < totalPages && !isLoading && <LoadMoreBtn changeClick={handleChangePage} />}
         </>
       )}
       {isLoading && <Loader />}
